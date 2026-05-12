@@ -40,4 +40,18 @@ class UserRepository
             'password' => $password
         ]);
     }
+
+    public function findByEmail(string $email): ?array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT id, name, email, password, created_at
+            FROM users
+            WHERE email = :email
+        ");
+
+        $stmt->execute(['email' => $email]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $user ?: null;
+    }
 }
