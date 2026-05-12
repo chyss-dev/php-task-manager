@@ -11,6 +11,11 @@ class Router
         $this->routes['GET'][$path] = $callback;
     }
 
+    public function post(string $path, callable $callback): void
+    {
+        $this->routes['POST'][$path] = $callback;
+    }
+
     public function dispatch(string $method, string $uri): void
     {
         $path = parse_url($uri, PHP_URL_PATH);

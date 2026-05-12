@@ -16,6 +16,7 @@ $userService = new UserService($userRepository);
 $userController = new UserController($userService);
 
 $router->get('/users', [$userController, 'index']);
+$router->post('/users', [$userController, 'store']);
 
 $router->dispatch(
     $_SERVER['REQUEST_METHOD'],
