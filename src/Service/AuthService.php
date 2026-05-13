@@ -3,11 +3,13 @@
 namespace App\Service;
 
 use App\Repository\UserRepository;
+use App\Repository\TokenRepository;
 
 class AuthService
 {
     public function __construct(
-        private UserRepository $userRepository
+        private UserRepository $userRepository,
+        private TokenRepository $tokenRepository
     ) {
     }
 
@@ -30,13 +32,18 @@ class AuthService
                 throw new \Exception('Credenciales inválidas');
             }
 
+            $token = bin2hex(random_bytes(32));
+            $user = [
+                'id' => $user['id'],
+                'name' => $user['name'],
+                'email' => $user['email']
+            ];
+
+            $this->tokenRepository->create($user['id'], $token);
+
             return [
-                'token' => bin2hex(random_bytes(32)),
-                'user' => [
-                    'id' => $user['id'],
-                    'name' => $user['name'],
-                    'email' => $user['email']
-                ]
+                'token' => $token,
+                'user' => $user
             ];
 
         } catch (\Exception $e) {
