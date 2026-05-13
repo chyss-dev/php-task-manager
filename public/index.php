@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use App\Config\Env;
 use App\Core\Router;
 use App\Repository\UserRepository;
 use App\Repository\TokenRepository;
@@ -10,6 +11,8 @@ use App\Service\AuthService;
 use App\Controller\UserController;
 use App\Controller\AuthController;
 use App\Controller\ProfileController;
+
+Env::load();
 
 $router = new Router();
 
