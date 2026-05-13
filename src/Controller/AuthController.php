@@ -22,8 +22,6 @@ class AuthController
                 true
             );
 
-            $post = $_POST;
-
             $result = $this->authService->login(
                 $data['email'] ?? '',
                 $data['password'] ?? ''
