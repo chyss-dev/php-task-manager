@@ -2,6 +2,8 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use App\Config\Env;
+use App\Core\Container;
 use App\Core\Router;
 use App\Repository\UserRepository;
 use App\Repository\TokenRepository;
@@ -11,24 +13,43 @@ use App\Controller\UserController;
 use App\Controller\AuthController;
 use App\Controller\ProfileController;
 
+Env::load();
+
+$container = new Container();
+
+$container->set(UserRepository::class, fn() => new UserRepository());
+$container->set(TokenRepository::class, fn() => new TokenRepository());
+
+$container->set(
+    UserService::class,
+    fn($c) => new UserService($c->get(UserRepository::class))
+);
+$container->set(
+    AuthService::class,
+    fn($c) => new AuthService(
+        $c->get(UserRepository::class),
+        $c->get(TokenRepository::class)
+    )
+);
+
+$container->set(
+    UserController::class,
+    fn($c) => new UserController($c->get(UserService::class))
+);
+$container->set(
+    AuthController::class,
+    fn($c) => new AuthController($c->get(AuthService::class))
+);
+$container->set(
+    ProfileController::class,
+    fn() => new ProfileController()
+);
+
 $router = new Router();
 
-$userRepository = new UserRepository();
-$tokenRepository = new TokenRepository();
-
-$userService = new UserService($userRepository);
-$authService = new AuthService($userRepository, $tokenRepository);
-
-$userController = new UserController($userService);
-$authController = new AuthController($authService);
-$profileController = new ProfileController();
-
-$router->get('/users', [$userController, 'index']);
-$router->get('/profile', [$profileController, 'index']);
-
-$router->post('/users', [$userController, 'store']);
-$router->post('/login', [$authController, 'login']);
-
+$router->get('/users', [$container->get(UserController::class), 'index']);
+$router->post('/users', [$container->get(UserController::class), 'store']);
+$router->get('/profile', [$container->get(ProfileController::class), 'index']);
 
 $router->dispatch(
     $_SERVER['REQUEST_METHOD'],

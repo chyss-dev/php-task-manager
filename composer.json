@@ -2,7 +2,10 @@
     "name": "cesar/task-manager",
     "description": "PHP practice",
     "type": "project",
-    "require": {},
+    "require": {
+        "php": "^8.3",
+        "vlucas/phpdotenv": "^5.6"
+    },
     "autoload": {
         "psr-4": {
             "App\\": "src/"
