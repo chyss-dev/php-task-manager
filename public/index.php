@@ -6,7 +6,7 @@ use App\Config\Env;
 use App\Core\Container;
 use App\Core\Router;
 use App\Repository\UserRepository;
-use App\Repository\TokenRepository;
+use App\Service\JwtService;
 use App\Service\UserService;
 use App\Service\AuthService;
 use App\Controller\UserController;
@@ -18,7 +18,8 @@ Env::load();
 $container = new Container();
 
 $container->set(UserRepository::class, fn() => new UserRepository());
-$container->set(TokenRepository::class, fn() => new TokenRepository());
+
+$container->set(JwtService::class, fn() => new JwtService());
 
 $container->set(
     UserService::class,
@@ -28,7 +29,7 @@ $container->set(
     AuthService::class,
     fn($c) => new AuthService(
         $c->get(UserRepository::class),
-        $c->get(TokenRepository::class)
+        $c->get(JwtService::class)
     )
 );
 
@@ -49,6 +50,7 @@ $router = new Router();
 
 $router->get('/users', [$container->get(UserController::class), 'index']);
 $router->post('/users', [$container->get(UserController::class), 'store']);
+$router->post('/login', [$container->get(AuthController::class), 'login']);
 $router->get('/profile', [$container->get(ProfileController::class), 'index']);
 
 $router->dispatch(

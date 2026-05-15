@@ -3,13 +3,13 @@
 namespace App\Service;
 
 use App\Repository\UserRepository;
-use App\Repository\TokenRepository;
+use App\Service\JwtService;
 
 class AuthService
 {
     public function __construct(
         private UserRepository $userRepository,
-        private TokenRepository $tokenRepository
+        private JwtService $jwtService
     ) {
     }
 
@@ -32,14 +32,13 @@ class AuthService
                 throw new \Exception('Credenciales inválidas');
             }
 
-            $token = bin2hex(random_bytes(32));
             $user = [
                 'id' => $user['id'],
                 'name' => $user['name'],
                 'email' => $user['email']
             ];
 
-            $this->tokenRepository->create($user['id'], $token);
+            $token = $this->jwtService->generate($user);
 
             return [
                 'token' => $token,

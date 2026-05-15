@@ -2,11 +2,11 @@
 
 namespace App\Middleware;
 
-use App\Repository\TokenRepository;
+use App\Service\JwtService;
 
 class AuthMiddleware
 {
-    public static function handle(): array
+    public static function handle(): ?object
     {
         $headers = getallheaders();
 
@@ -18,13 +18,15 @@ class AuthMiddleware
 
         $token = str_replace('Bearer ', '', $authHeader);
 
-        $user = (new TokenRepository())->findUserByToken($token);
+        try {
+            $jwtService = new JwtService();
 
-        if (!$user) {
+            return $jwtService->validate($token);
+
+        } catch (\Exception $e) {
+
             self::unauthorized();
         }
-
-        return $user;
     }
 
     private static function unauthorized(): void
@@ -35,5 +37,4 @@ class AuthMiddleware
 
         exit;
     }
-
 }
