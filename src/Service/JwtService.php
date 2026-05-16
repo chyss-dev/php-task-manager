@@ -13,8 +13,9 @@ class JwtService
             'id' => $user['id'],
             'email' => $user['email'],
             'name' => $user['name'],
+            'role' => $user['role'],
             'iat' => time(),
-            'exp' => time() + 30
+            'exp' => time() + 3600
         ];
 
         return JWT::encode(
