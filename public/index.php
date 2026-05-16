@@ -12,6 +12,7 @@ use App\Service\AuthService;
 use App\Controller\UserController;
 use App\Controller\AuthController;
 use App\Controller\ProfileController;
+use App\Controller\AdminController;
 
 Env::load();
 
@@ -46,12 +47,18 @@ $container->set(
     fn() => new ProfileController()
 );
 
+$container->set(
+    AdminController::class,
+    fn() => new AdminController()
+);
+
 $router = new Router();
 
 $router->get('/users', [$container->get(UserController::class), 'index']);
 $router->post('/users', [$container->get(UserController::class), 'store']);
 $router->post('/login', [$container->get(AuthController::class), 'login']);
 $router->get('/profile', [$container->get(ProfileController::class), 'index']);
+$router->get('/admin', [$container->get(AdminController::class), 'dashboard']);
 
 $router->dispatch(
     $_SERVER['REQUEST_METHOD'],
