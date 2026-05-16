@@ -17,7 +17,7 @@ class UserRepository
     public function findAll(): array
     {
         $stmt = $this->pdo->query("
-            SELECT id, name, email, created_at
+            SELECT id, name, email, role, created_at
             FROM users
         ");
 
@@ -44,7 +44,7 @@ class UserRepository
     public function findByEmail(string $email): ?array
     {
         $stmt = $this->pdo->prepare("
-            SELECT id, name, email, password, created_at
+            SELECT id, name, email, role, password, created_at
             FROM users
             WHERE email = :email
         ");
